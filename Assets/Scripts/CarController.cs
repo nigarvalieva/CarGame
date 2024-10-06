@@ -26,7 +26,7 @@ public class CarController : MonoBehaviour
     private Direction carDirectionX = Direction.None;
     private Direction carDirectionY = Direction.None;
 
-    public Text Count;
+    public Text Count, countMoney;
     public GameObject Start;
 
     private AudioSource _audio;
@@ -86,7 +86,12 @@ public class CarController : MonoBehaviour
 
         if (transform.position == FinalPosition)
         {
+            PlayerPrefs.SetInt("CarCoins", PlayerPrefs.GetInt("CarCoins") + 1);
+            countMoney.text = Convert.ToString(Convert.ToInt32(countMoney.text) + 1);
             CountCars--;
+
+            if(CountCars == 0) Start.GetComponent<StartGame>().WinGame();
+
             Destroy(gameObject);
         }
     }

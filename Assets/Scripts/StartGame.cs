@@ -4,13 +4,13 @@ using UnityEngine.SceneManagement;
 public class StartGame : MonoBehaviour
 {
     public static bool IsGameStarted = false;
-    public GameObject Logo, Start, Count, Lose;
+    public GameObject Logo, Start, Count, Lose, Win, Shop;
 
-    private bool IsLoseGame = false;
+    private bool IsLoseGame = false, isWinGame = false;
 
     public void PlayGame()
     {
-        if (!IsLoseGame)
+        if (!IsLoseGame && !isWinGame)
         {
             IsGameStarted = true;
             Logo.SetActive(false);
@@ -20,6 +20,15 @@ public class StartGame : MonoBehaviour
         }
         else
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void WinGame()
+    {
+        isWinGame = true;
+        Logo.SetActive(true);
+        Start.SetActive(true);
+        Win.SetActive(true);
+        Shop.SetActive(true);
     }
 
     public void LoseGame()
