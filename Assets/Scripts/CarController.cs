@@ -50,6 +50,7 @@ public class CarController : MonoBehaviour
     private void OnMouseUp()
     {
         if (!StartGame.IsGameStarted) return;
+
         if (Input.mousePosition.x - cursorPointX < 0)
             carDirectionX = Direction.Left;
         else
@@ -63,8 +64,6 @@ public class CarController : MonoBehaviour
         isClicked = true;
 
         Count.text = Convert.ToString(Convert.ToInt32(Count.text) - 1);
-        if (Count.text == "0")
-            Start.GetComponent<StartGame>().LoseGame();
 
         _audio.Stop();
         _audio.clip = AudioStart;
@@ -74,7 +73,10 @@ public class CarController : MonoBehaviour
 
     void Update()
     {
-        if (FinalPosition.x != 0 && CountCars > 0 && isClicked)
+        if (Count.text == "0" && CountCars > 0 && !isClicked)
+            Start.GetComponent<StartGame>().LoseGame();
+
+        if (FinalPosition.x != 0)
         {
             transform.position = Vector3.MoveTowards(transform.position, FinalPosition, finalSpeed * Time.deltaTime);
             Vector3 lookAtPos = FinalPosition - transform.position;
