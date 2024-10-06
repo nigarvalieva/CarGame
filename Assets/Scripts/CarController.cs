@@ -4,9 +4,9 @@ using UnityEngine.UI;
 
 public class CarController : MonoBehaviour
 {
-   
+
     private Rigidbody _rb;
-    public float speed = 20f, finalSpeed = 20f, rotateSpeed = 350f;
+    public float speed = 20f, finalSpeed = 50f, rotateSpeed = 350f;
     private bool isClicked;
     private static int CountCars = 0;
 
@@ -25,15 +25,19 @@ public class CarController : MonoBehaviour
     }
     private Direction carDirectionX = Direction.None;
     private Direction carDirectionY = Direction.None;
-    
+
     public Text Count;
     public GameObject Start;
+
+    private AudioSource _audio;
+    public AudioClip AudioStart, AudioCrash;
 
 
     void Awake()
     {
         CountCars++;
         _rb = GetComponent<Rigidbody>();
+        _audio = GetComponent<AudioSource>();
     }
 
     void OnMouseDown()
@@ -62,11 +66,16 @@ public class CarController : MonoBehaviour
         if (Count.text == "0")
             Start.GetComponent<StartGame>().LoseGame();
 
+        _audio.Stop();
+        _audio.clip = AudioStart;
+        _audio.Play();
+
     }
 
     void Update()
     {
-        if (FinalPosition.x != 0 && CountCars > 0 && !isClicked) {
+        if (FinalPosition.x != 0 && CountCars > 0 && isClicked)
+        {
             transform.position = Vector3.MoveTowards(transform.position, FinalPosition, finalSpeed * Time.deltaTime);
             Vector3 lookAtPos = FinalPosition - transform.position;
             lookAtPos.y = 0;
@@ -82,8 +91,9 @@ public class CarController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isClicked && FinalPosition.x == 0) {
-            Vector3 whichWay = carAxis ==Axis.Horizontal ? Vector3.forward : Vector3.left;
+        if (isClicked && FinalPosition.x == 0)
+        {
+            Vector3 whichWay = carAxis == Axis.Horizontal ? Vector3.forward : Vector3.left;
             speed = Math.Abs(speed);
             if (carDirectionX == Direction.Left && carAxis == Axis.Horizontal)
                 speed *= -1;
@@ -98,6 +108,13 @@ public class CarController : MonoBehaviour
     {
         if (other.CompareTag("Car") || other.CompareTag("Barrier"))
         {
+            if (_audio.clip != AudioCrash && !_audio.isPlaying)
+            {
+                _audio.Stop();
+                _audio.clip = AudioCrash;
+                _audio.Play();
+            }
+
             if (carAxis == Axis.Horizontal && isClicked)
             {
                 float adding = carDirectionX == Direction.Left ? 0.5f : -0.5f;
